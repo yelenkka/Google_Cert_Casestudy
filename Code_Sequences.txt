@@ -1,0 +1,245 @@
+
+########
+
+MYSQL CODE SQEUENCES FOR GOOGLE DATA ANALYTICS CERTIFICATE - CASE STUDY ASSIGNMENT: How do annual members and casual riders use Cyclistic bikes differently?
+
+########
+
+
+--- CREATING TEMP TABLE (UNCLEANED)FOR THE YEAR 2021
+
+  CREATE TABLE `Google_Cert`.`2021_01`(
+  `ride_id` NVARCHAR(50) NOT NULL,
+  `rideable_type` NVARCHAR(50) NOT NULL,
+  `started_at` DATETIME NOT NULL,
+  `ended_at` DATETIME NOT NULL,
+  `start_station_name` NVARCHAR(50) NOT NULL,
+  `start_station_id` NVARCHAR(50) NOT NULL,
+  `end_station_name` NVARCHAR(50) NOT NULL,
+  `end_station_id` NVARCHAR(50) NOT NULL,
+  `start_lat` FLOAT NOT NULL,
+  `start_lng` FLOAT NOT NULL,
+  `end_lat` FLOAT NOT NULL,
+  `end_lng` FLOAT NOT NULL,
+  `member_casual` NVARCHAR(50) NOT NULL,
+  `new_tablecol` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`ride_id`)); 
+  
+--- CHECK KEYS - NULL DEFAULT IS MISSING ---
+
+--- ALTER TABLE CHANGE NULL ---
+
+ALTER TABLE `Google_Cert`.`2021_01` 
+CHANGE COLUMN `rideable_type` `rideable_type` VARCHAR(50) NOT NULL ,
+CHANGE COLUMN `started_at` `started_at` DATETIME NULL DEFAULT NULL ,
+CHANGE COLUMN `ended_at` `ended_at` DATETIME NULL DEFAULT NULL ,
+CHANGE COLUMN `start_station_name` `start_station_name` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `start_station_id` `start_station_id` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `end_station_name` `end_station_name` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `end_station_id` `end_station_id` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `start_lat` `start_lat` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `start_lng` `start_lng` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `end_lat` `end_lat` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `end_lng` `end_lng` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `member_casual` `member_casual` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `new_tablecol` `new_tablecol` VARCHAR(45) NULL DEFAULT NULL ;
+
+--- REPEAT STEPS FOR TABLES ("02_2021", ..., "12_2021) ---
+
+--- IMPORT FILE LOAD DATA LOCAL--- 
+
+LOAD DATA LOCAL INFILE '/Users/admin/Case_Study/202101-divvy-tripdata.csv'
+INTO TABLE 2021_01
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n' 
+
+--- RESULTS IN ERROR DUE TO MISSING PERMISSION IN OPENSOURCE MYSQL ---
+
+--- LOAD DATA "IMPORT WIZARD" ---
+
+--- CREATE TEMP TABLE FOR CLEANING ALL `Google_Cert`.`2021_all` ---
+
+--- COMBINE TABLES INTO `Google_Cert`.`2021_all` ---
+
+INSERT INTO `Google_Cert`.`2021_all`
+
+SELECT * FROM `2021_01`
+	UNION ALL
+	SELECT * FROM `2021_02`
+	UNION ALL
+    SELECT * FROM `2021_03`
+	UNION ALL
+    SELECT * FROM `2021_04`
+	UNION ALL
+    SELECT * FROM `2021_05`
+	UNION ALL
+    SELECT * FROM `2021_06`
+	UNION ALL
+    SELECT * FROM `2021_07`
+	UNION ALL
+    SELECT * FROM `2021_08`
+	UNION ALL
+    SELECT * FROM `2021_09`
+	UNION ALL
+    SELECT * FROM `2021_10`
+	UNION ALL
+    SELECT * FROM `2021_11`
+	UNION ALL
+    SELECT * FROM `2021_12`;
+
+---	CHECK IF NUMBERS OF ROWS ARE EQUAL TO SUM OF ALL TABLES ---
+
+	SELECT Count(*) FROM  `Google_Cert`.`2021_all`   
+
+	Result: 167422
+	
+
+--- PROCESS DATA ---
+
+	SELECT TRIM(ride_id),
+		TRIM(rideable_type),
+	    TRIM(started_at),
+	    TRIM(start_station_name),
+	    TRIM(start_station_id),
+	    TRIM(end_station_name),
+	    TRIM(end_station_id),
+	    TRIM(start_lat),
+	    TRIM(start_lng),
+	    TRIM(end_lat),
+	    TRIM(end_lng),
+	    TRIM(member_casual)
+	FROM `Google_Cert`.`2021_all` 
+
+
+	SELECT * FROM  `Google_Cert`.`2021_all`
+	WHERE ride_id != ""
+		AND rideable_type != ""
+	    AND started_at IS NOT NULL
+		AND ended_at IS NOT NULL
+	    AND start_station_name != ""
+	    AND start_station_id != ""
+	    AND end_station_name != ""
+	    AND end_station_id != ""
+	    AND start_lat != ""
+	    AND start_lng != ""
+	    AND end_lat != ""
+	    AND end_lng  != ""
+	    AND member_casual != ""
+		
+--- CREATE TEMPORARY TABLE NULL AND BLAMK VALUES EXCLUDED ---
+
+CREATE TABLE `Google_Cert`.`2021_all_notnull`(
+`ride_id` NVARCHAR(50) NOT NULL,
+`rideable_type` NVARCHAR(50) NOT NULL,
+`started_at` DATETIME NOT NULL,
+`ended_at` DATETIME NOT NULL,
+`start_station_name` NVARCHAR(50) NOT NULL,
+`start_station_id` NVARCHAR(50) NOT NULL,
+`end_station_name` NVARCHAR(50) NOT NULL,
+`end_station_id` NVARCHAR(50) NOT NULL,
+`start_lat` FLOAT NOT NULL,
+`start_lng` FLOAT NOT NULL,
+`end_lat` FLOAT NOT NULL,
+`end_lng` FLOAT NOT NULL,
+`member_casual` NVARCHAR(50) NOT NULL,
+`new_tablecol` VARCHAR(45) NOT NULL,
+PRIMARY KEY (`ride_id`)); 
+
+
+ALTER TABLE `Google_Cert`.`2021_01` 
+CHANGE COLUMN `rideable_type` `rideable_type` VARCHAR(50) NOT NULL ,
+CHANGE COLUMN `started_at` `started_at` DATETIME NULL DEFAULT NULL ,
+CHANGE COLUMN `ended_at` `ended_at` DATETIME NULL DEFAULT NULL ,
+CHANGE COLUMN `start_station_name` `start_station_name` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `start_station_id` `start_station_id` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `end_station_name` `end_station_name` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `end_station_id` `end_station_id` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `start_lat` `start_lat` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `start_lng` `start_lng` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `end_lat` `end_lat` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `end_lng` `end_lng` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `member_casual` `member_casual` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `new_tablecol` `new_tablecol` VARCHAR(45) NULL DEFAULT NULL ;
+
+--- INSERT NOT NULL ATTRIBUTES IN NEW TEMPORARY TABLE `Google_Cert`.`2021_all_notnull` ---
+
+INSERT INTO `Google_Cert`.`2021_all_notnull` 
+	(SELECT * FROM  `Google_Cert`.`2021_all`
+WHERE ride_id != ""
+	AND rideable_type != ""
+    AND started_at IS NOT NULL
+	AND ended_at IS NOT NULL
+    AND start_station_name != ""
+    AND start_station_id != ""
+    AND end_station_name != ""
+    AND end_station_id != ""
+    AND start_lat != ""
+    AND start_lng != ""
+    AND end_lat != ""
+    AND end_lng  != ""
+    AND member_casual != "");
+
+--- CALCULATING: RIDE LENGTH AND DAY OF THE WEEK AND MONTH ---
+
+SELECT *,
+ 	TIMESTAMPDIFF(Minute, started_at, ended_at) AS ride_length_minutes,
+	DATE_FORMAT(started_at, '%a') AS day_of_week2,
+	MONTHNAME(started_at) AS month
+	FROM `Google_Cert`.`2021_all_notnull`;
+	
+--- CREATING NEW TABLE FOR LAST CHECK AND INSERT CALCULATED LENGTH, DAY OF THE WEEK AND MONT ---
+
+CREATE TABLE `Google_Cert`.`2021_allnotnull_calc`(
+  `ride_id` NVARCHAR(50) NOT NULL,
+  `rideable_type` NVARCHAR(50) NOT NULL,
+  `started_at` DATETIME NOT NULL,
+  `ended_at` DATETIME NOT NULL,
+  `start_station_name` NVARCHAR(50) NOT NULL,
+  `start_station_id` NVARCHAR(50) NOT NULL,
+  `end_station_name` NVARCHAR(50) NOT NULL,
+  `end_station_id` NVARCHAR(50) NOT NULL,
+  `start_lat` FLOAT NOT NULL,
+  `start_lng` FLOAT NOT NULL,
+  `end_lat` FLOAT NOT NULL,
+  `end_lng` FLOAT NOT NULL,
+  `member_casual` NVARCHAR(50) NOT NULL,
+  `new_tablecol` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`ride_id`));
+  
+  ALTER TABLE `2021_allnotnull_calc`
+CHANGE COLUMN `rideable_type` `rideable_type` VARCHAR(50) NOT NULL ,
+CHANGE COLUMN `started_at` `started_at` DATETIME NULL DEFAULT NULL ,
+CHANGE COLUMN `ended_at` `ended_at` DATETIME NULL DEFAULT NULL ,
+CHANGE COLUMN `start_station_name` `start_station_name` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `start_station_id` `start_station_id` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `end_station_name` `end_station_name` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `end_station_id` `end_station_id` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `start_lat` `start_lat` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `start_lng` `start_lng` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `end_lat` `end_lat` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `end_lng` `end_lng` FLOAT NULL DEFAULT NULL ,
+CHANGE COLUMN `member_casual` `member_casual` VARCHAR(50) NULL DEFAULT NULL ,
+CHANGE COLUMN `new_tablecol` `new_tablecol` VARCHAR(45) NULL DEFAULT NULL ;
+
+INSERT INTO `Google_Cert`.`2021_allnotnull_calc` 
+	(SELECT *,
+		TIMESTAMPDIFF(Minute, started_at, ended_at) AS ride_length_minutes,
+  		DATE_FORMAT(started_at, '%a') AS day_of_week,
+		MONTHNAME(started_at) AS month
+		FROM `Google_Cert`.`2021_all_notnull`);
+
+--- REMOVING TEST RIDES ---
+
+SELECT *
+FROM `Google_Cert`.`2021_allnotnull_calc` 
+WHERE
+ride_length_minutes > 1
+AND start_station_name != "%TEST%"
+AND end_station_name != "%TEST%"
+
+
+--- CHECK `Google_Cert`.`2021_allnotnull_calc` ---
+
+--- EXPORT `Google_Cert`.`2021_allnotnull_calc` WITH DATA WIZZARD ---
+
+
